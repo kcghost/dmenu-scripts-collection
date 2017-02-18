@@ -26,10 +26,12 @@ case "$1" in
         case $cmd in
             *\;)    cmdexec="urxvt -e $cmdexec" ;;
         esac
-        # Ugly workaround to run functions...
-        echo "$cmdexec" | compgen -F "$cmdexec" | bash
-        # ...and aliases
-        echo "$cmdexec" | bash
+
+        if [ -n "$(type -t "$cmdexec")" ] && [ "$(type -t "$cmdexec")" = function ]; then
+            echo "$cmdexec" | compgen -F "$cmdexec" | bash && exit
+        else
+            echo "$cmdexec" | bash && exit
+        fi
     fi
     ;;
 esac
